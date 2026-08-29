@@ -1,0 +1,72 @@
+{
+    "name": "tradernet/laravel",
+    "description": "Laravel integration for the Tradernet PHP SDK: config, container bindings, facade, cache-backed SID session storage.",
+    "type": "library",
+    "license": "MIT",
+    "keywords": ["tradernet", "laravel", "trading", "broker", "api", "sdk"],
+    "homepage": "https://tradernet.com/tradernet-api/",
+    "authors": [
+        {
+            "name": "Tradernet API Support",
+            "email": "kostikov@tradernet.com",
+            "homepage": "https://tradernet.com"
+        }
+    ],
+    "require": {
+        "php": "^8.3",
+        "illuminate/cache": "^11.0|^12.0|^13.0",
+        "illuminate/contracts": "^11.0|^12.0|^13.0",
+        "illuminate/encryption": "^11.0|^12.0|^13.0",
+        "illuminate/support": "^11.0|^12.0|^13.0",
+        "tradernet/sdk": "dev-main"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.68",
+        "orchestra/testbench": "^9.0|^10.0|^11.0",
+        "phpstan/phpstan": "^2.1",
+        "phpstan/phpstan-strict-rules": "^2.0",
+        "phpunit/phpunit": "^11.5"
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../TradernetPhpSDK",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Tradernet\\Laravel\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tradernet\\Laravel\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Tradernet\\Laravel\\TradernetServiceProvider"
+            ],
+            "aliases": {
+                "Tradernet": "Tradernet\\Laravel\\Facades\\Tradernet"
+            }
+        },
+        "branch-alias": {
+            "dev-main": "0.1.x-dev"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "stan": "phpstan analyse --memory-limit=512M",
+        "cs": "php-cs-fixer fix --dry-run --diff"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

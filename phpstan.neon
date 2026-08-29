@@ -1,0 +1,17 @@
+includes:
+    - vendor/phpstan/phpstan-strict-rules/rules.neon
+
+parameters:
+    level: max
+    paths:
+        - src
+        - tests
+    treatPhpDocTypesAsCertain: false
+    ignoreErrors:
+        # __call() forwards every SDK method to the default connection, which is
+        # the documented purpose of the manager (see @mixin Tradernet). Dynamic
+        # dispatch is the feature here, so the strict rule does not apply.
+        -
+            identifier: method.dynamicName
+            path: src/TradernetManager.php
+            count: 1

@@ -1,0 +1,86 @@
+name: ci
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  tests:
+    name: PHP ${{ matrix.php }} / Laravel ${{ matrix.laravel }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { php: '8.3', laravel: '11.*', testbench: '9.*' }
+          - { php: '8.4', laravel: '11.*', testbench: '9.*' }
+          - { php: '8.3', laravel: '12.*', testbench: '10.*' }
+          - { php: '8.4', laravel: '12.*', testbench: '10.*' }
+          - { php: '8.4', laravel: '13.*', testbench: '11.*' }
+          - { php: '8.5', laravel: '13.*', testbench: '11.*' }
+
+    steps:
+      # Both repos are checked out as siblings so the "../TradernetPhpSDK"
+      # path repository in composer.json resolves without rewriting the file.
+      - uses: actions/checkout@v4
+        with:
+          path: laravel-tradernet
+
+      - name: Checkout TradernetPhpSDK
+        uses: actions/checkout@v4
+        with:
+          repository: tradernet-api/TradernetPhpSDK
+          path: TradernetPhpSDK
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: json, openssl
+          coverage: none
+
+      - name: Install dependencies
+        working-directory: laravel-tradernet
+        run: |
+          composer require "illuminate/support:${{ matrix.laravel }}" --no-interaction --no-update
+          composer require --dev "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
+          composer update --prefer-dist --no-interaction --no-progress
+
+      - name: Run tests
+        working-directory: laravel-tradernet
+        run: vendor/bin/phpunit
+
+  static-analysis:
+    name: PHPStan + code style
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: laravel-tradernet
+
+      - name: Checkout TradernetPhpSDK
+        uses: actions/checkout@v4
+        with:
+          repository: tradernet-api/TradernetPhpSDK
+          path: TradernetPhpSDK
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: json, openssl
+          coverage: none
+
+      - name: Install dependencies
+        working-directory: laravel-tradernet
+        run: composer update --prefer-dist --no-interaction --no-progress
+
+      - name: PHPStan
+        working-directory: laravel-tradernet
+        run: vendor/bin/phpstan analyse --no-progress --memory-limit=512M
+
+      - name: Code style
+        working-directory: laravel-tradernet
+        run: vendor/bin/php-cs-fixer fix --dry-run --diff
