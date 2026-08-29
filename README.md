@@ -123,4 +123,4 @@ Before publishing to Packagist:
 
 ## License
 
-MIT
+[MIT](LICENSE) © Tradernet API Support \<tradernet.com\>
