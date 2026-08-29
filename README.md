@@ -22,8 +22,6 @@ This package does **not** reimplement the HTTP API. It depends on `tradernet/sdk
 composer require tradernet/laravel
 ```
 
-> Until `tradernet/sdk` is published on Packagist, consumers must add a VCS/path repository for the SDK in the **application** `composer.json` (Composer does not inherit `repositories` from dependencies).
-
 Publish config:
 
 ```bash
@@ -104,22 +102,20 @@ The `cache` driver **rejects the `array` and `null` cache stores** at constructi
 
 ## Local development
 
-This repo uses a path repository to `../TradernetPhpSDK` for local iteration, so clone both repositories as siblings.
+Clone next to `TradernetPhpSDK`. The committed `composer.json` expects Packagist (`tradernet/sdk: ^0.1`).
+
+Until Packagist is live (or for local SDK edits), temporarily link the sibling — **do not commit** the change:
 
 ```bash
-composer install
-composer test   # phpunit
-composer stan   # phpstan, level max
-composer cs     # php-cs-fixer, dry run
+composer config repositories.sdk path ../TradernetPhpSDK
+composer update tradernet/sdk
+composer test
+composer stan
+composer cs
+git checkout -- composer.json   # restore publishable composer.json before push
 ```
 
-### Release checklist
-
-Before publishing to Packagist:
-
-1. Remove the `repositories` section from `composer.json`.
-2. Pin `tradernet/sdk` to a semver constraint (`^0.1`) instead of `dev-main`.
-3. Drop `"minimum-stability": "dev"`.
+Maintainer release steps: [docs/publishing.md](docs/publishing.md).
 
 ## License
 

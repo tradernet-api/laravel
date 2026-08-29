@@ -30,7 +30,8 @@ Laravel glue for Tradernet PHP SDK: ServiceProvider, config publish, facade, nam
 
 - No HTTP clients, API resources, auth, or signing in this package — call the SDK.
 - Persist sessions with `Session::toArray()`, never `jsonSerialize()` (masks SID).
-- Do not commit path/`@dev` repositories in a Packagist release; path repo is for local sibling SDK only.
+- Committed `composer.json` must stay Packagist-ready: `tradernet/sdk: ^0.1`, no `repositories`, `minimum-stability: stable`.
+- Local sibling SDK: temporary `composer config repositories.sdk path ../TradernetPhpSDK`, then `git checkout -- composer.json` before push. See `docs/publishing.md`.
 - Prefer DI of `Tradernet\Sdk\Tradernet`; facade is optional DX.
 - Never make the provider a `DeferrableProvider`: deferred providers are not booted at bootstrap, so `vendor:publish --tag=tradernet-config` would find nothing.
 - `Tradernet` is bound with `bind()`, not `singleton()`/`scoped()`. `TradernetManager` owns the only client cache, so `purge()` stays a single reset point for DI and facade.
